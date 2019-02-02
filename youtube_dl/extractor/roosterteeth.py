@@ -102,11 +102,19 @@ class RoosterTeethIE(InfoExtractor):
         data = api_response['data'][0]
 
         attributes = data['attributes']
+        series = attributes.get('show_title')
         episode = attributes.get('display_title')
+        if series == "gen:LOCK":
+            if episode[2] == ":":
+                episode = "S0" + episode[1:]
+            elif episode[2].isdigit():
+                episode = "S" + episode[1:]
+            if episode[6] == " ":
+                episode = episode[:3] + "E0" + episode[5:]
+            elif episode[6].isdigit():
+                episode = episode[:3] + "E" + episode[5:]
         title = attributes['title']
         description = attributes.get('caption')
-        series = attributes.get('show_title')
-
         thumbnails = []
         for i, size in enumerate(['thumb', 'small', 'medium', 'large']):
             thumbnail = try_get(data, lambda x: x['included']['images'][0]['attributes'][size], compat_str)
