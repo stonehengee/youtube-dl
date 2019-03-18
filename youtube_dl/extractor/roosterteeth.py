@@ -100,41 +100,23 @@ class RoosterTeethIE(InfoExtractor):
         )
 
         data = api_response['data'][0]
-
+        my_series = ["gen:LOCK", "Arizona Circle", "Achievement Haunter", "Hardcore Tabletop", "The Weird Place"]
         attributes = data['attributes']
         episode = attributes.get('display_title')
         title = attributes['title']
         description = attributes.get('caption')
         series = attributes.get('show_title')
-        if series == "gen:LOCK":
-            if episode[2] == ":":
-                episode = "S0" + episode[1:]
+        if series in my_series:
+            if not episode[2].isdigit():
+			    episode = "S0" + episode[1:]
             elif episode[2].isdigit():
                 episode = "S" + episode[1:]
             if episode[6] == " ":
                 episode = episode[:3] + "E0" + episode[5:]
-            elif episode[6].isdigit():
-                episode = episode[:3] + "E" + episode[5:]
-        if series == "Ten Little Roosters":
-            if episode[2] == ":":
-                episode = "S0" + episode[1:]
-            elif episode[2].isdigit():
-                episode = "S" + episode[1:]
-            if episode[6] == " ":
-                episode = episode[:3] + "E0" + episode[5:]
-            elif episode[6].isdigit():
-                episode = episode[:3] + "E" + episode[5:]
-            print(episode)
-        if series == "The Eleven Little Roosters":
-            if episode[2] == ":":
-                episode = "S0" + episode[1:]
-            elif episode[2].isdigit():
-                 episode = "S" + episode[1:]
-            if episode[6] == " ":
-                episode = episode[:3] + "0" + episode[5:]
-            elif episode[6].isdigit():
-                episode = episode[:3] + episode[5:]
-
+            elif episode[6].isdigit() and episode[7].isdigit():
+                episode = episode[:3] + "E" + episode[6:]
+            else:
+                episode = episode[:3] + "E0" + episode[6:]
         thumbnails = []
         for i, size in enumerate(['thumb', 'small', 'medium', 'large']):
             thumbnail = try_get(data, lambda x: x['included']['images'][0]['attributes'][size], compat_str)
